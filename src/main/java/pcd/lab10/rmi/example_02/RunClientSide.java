@@ -1,5 +1,7 @@
 package pcd.lab10.rmi.example_02;
 
+import pcd.lab10.rmi.example_01.MyService;
+
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,11 +17,14 @@ public class RunClientSide {
             var registry = LocateRegistry.getRegistry(host);
             var c = (Counter) registry.lookup("countObj");
 
+
             int value = c.getValue();
             log("count value " + value);
                         
             var l = new MyCounterListenerImpl();
-            c.addListener(l);
+            RemoteCounterListener proxy = (RemoteCounterListener) UnicastRemoteObject.exportObject(l, 0);
+
+            c.addListener(proxy);
             
             c.inc();
             
